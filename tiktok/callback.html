@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Connect TikTok</title><link rel="stylesheet" href="style.css"></head>
+<body><main>
+<div class="brand"><i></i>DRAFT UPLOADER</div>
+<h1 id="title">Almost done</h1>
+<p id="hint">Copy the line below and send it to the Telegram bot. The server finishes the connection by itself.</p>
+<pre id="line">…</pre>
+<p><button id="copy">Copy</button> <span id="done" class="muted"></span></p>
+<p class="muted">The code is valid for a few minutes and can be used only once. This page stores nothing.</p>
+</main>
+<script>
+// Liest code/state aus der Adresszeile und zeigt eine Zeile zum Kopieren: "TIKTOK <state> <code>"
+const q = new URLSearchParams(location.search);
+const line = document.getElementById("line");
+if (q.get("error")) {
+  document.getElementById("title").textContent = "Not connected";
+  document.getElementById("hint").innerHTML = '<span class="err">TikTok reported an error:</span>';
+  line.textContent = q.get("error") + (q.get("error_description") ? " – " + q.get("error_description") : "");
+} else if (q.get("code")) {
+  line.textContent = "TIKTOK " + (q.get("state") || "-") + " " + q.get("code");
+} else {
+  document.getElementById("title").textContent = "Nothing to do here";
+  document.getElementById("hint").textContent = "This page is only used after signing in with TikTok.";
+  line.textContent = "-";
+}
+document.getElementById("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(line.textContent); document.getElementById("done").textContent = "Copied ✓"; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(line); getSelection().removeAllRanges(); getSelection().addRange(r);
+    document.getElementById("done").textContent = "Selected – copy it manually"; }
+};
+</script>
+</body></html>
